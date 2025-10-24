@@ -11,12 +11,11 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
-import java.sql.Driver;
 import java.util.Properties;
 
 @Configuration
@@ -50,9 +49,9 @@ public class AppConfig implements WebMvcConfigurer {
         properties.put("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
         properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
 
-        String ddl = env.getProperty("hibernate.hbm2dll.auto");
+        String ddl = env.getProperty("hibernate.hbm2ddl.auto");
         if (ddl != null) {
-            properties.put("hibernate.hbm2dll.auto", ddl);
+            properties.put("hibernate.hbm2ddl.auto", ddl);
         }
 
         return properties;
@@ -74,5 +73,12 @@ public class AppConfig implements WebMvcConfigurer {
         transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://127.0.0.1:5500")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
